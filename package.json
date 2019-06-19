@@ -1,0 +1,16 @@
+{
+  "name": "suomen_dynmap",
+  "version": "2.0.0",
+  "description": "Yee boii",
+  "main": "main.js",
+  "scripts": {
+    "test": "echo No test :/"
+  },
+  "author": "Gandalf The Green",
+  "license": "ISC",
+  "dependencies": {
+    "cookie-parser": "^1.4.4",
+    "express": "^4.17.1",
+    "request": "^2.88.0"
+  }
+}
