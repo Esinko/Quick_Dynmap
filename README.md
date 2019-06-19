@@ -30,6 +30,7 @@ const port = "8090" //Webserver host of router
 Here you find everything you will need to setup the router, The port and list of maps and servers.
 
 But how do I add servers?
+
 4. In the map section add your server and map like this:
 ```"domain, like "https://google.com": ["map, "map/two"]```
 Now the router will know that there is a map in: https://google.com/map/ and https://google.com/map/two
