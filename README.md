@@ -9,7 +9,7 @@ To setup the map, download this github repostory and follow the following tutori
 1. Open a port or if you already have an open port skip this step
 2. Open main.js and look for: /* Config */.
 3. In it you will see something like this:
-`const map = {
+```const map = {
     
 }
 
@@ -23,7 +23,8 @@ const mapNames = {
     }
 }
 
-const port = "8090" //Webserver host of router`
+const port = "8090" //Webserver host of router
+```
 
 Here you find everything you will need to setup the router, The port and list of maps and servers.
 
@@ -41,7 +42,8 @@ Now the router will know that the map in https://google.com/map has a name, Town
 Now tha api will apply the json object in that file to the markers in the map while loading it.
 
 The file will contain a JSON object, not a complete JSON file. Example:
-```"suomi": {
+```
+"suomi": {
     "hide": false,
     "circles": {
     },
@@ -71,7 +73,8 @@ The file will contain a JSON object, not a complete JSON file. Example:
         }
     },
     "layerprio": 0
-}```
+}
+```
 
 Documentation of the object contents can be found in the dynmap documentation
 
