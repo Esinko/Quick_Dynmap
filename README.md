@@ -86,4 +86,4 @@ Documentation of the object contents can be found in the dynmap documentation
 You can host assets for markers and other stuff in the assets folder, the files can be found in POST /api?filename=[filename_here]
 
 # Usage
-I suggest you have a basic knowledge of Javascript and JSON. So you can edit stuff I put in myself as this is repostory for and in use service.
+I suggest you have a basic knowledge of Javascript and JSON. So you can edit stuff I put in myself as this is repostory for anin use service.
