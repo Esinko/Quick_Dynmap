@@ -29,19 +29,19 @@ Here you find everything you will need to setup the router, The port and list of
 
 But how do I add servers?
 4. In the map section add your server and map like this:
-*"domain, like "https://google.com": ["map, "map/two"]*
+```"domain, like "https://google.com": ["map, "map/two"]```
 Now the router will know that there is a map in: https://google.com/map/ and https://google.com/map/two
 (You can have max /two/parts/ after the domain)
 5. Adding names, To make the names look better go to the mapNames section and add details like this:
-In the server section, define your server's name with: `"server domain, like https://google.com": "Google, or some other name"`
-In the maps section add in details like this: `"server domain, like https://google.com": {"map": "Towny"}`
+In the server section, define your server's name with: ```"server domain, like https://google.com": "Google, or some other name"```
+In the maps section add in details like this: ```"server domain, like https://google.com": {"map": "Towny"}```
 Now the router will know that the map in https://google.com/map has a name, Towny.
 
 5. Adding custom marker files. When you add a new domain to the map section, go into the markers folder and create a file that has a name like this: https://google.com/map BUT the / is replaced with - . So: https:--google.com-map
 Now tha api will apply the json object in that file to the markers in the map while loading it.
 
 The file will contain a JSON object, not a complete JSON file. Example:
-`"suomi": {
+```"suomi": {
     "hide": false,
     "circles": {
     },
@@ -71,7 +71,7 @@ The file will contain a JSON object, not a complete JSON file. Example:
         }
     },
     "layerprio": 0
-}`
+}```
 
 Documentation of the object contents can be found in the dynmap documentation
 
