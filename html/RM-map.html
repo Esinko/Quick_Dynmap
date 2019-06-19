@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<head>
+    <title>Suomen dynmap :D</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <meta content="Suomen dynmap, Käytännöllisyyttä ja järjenkäyttöä soveltaen tehty dynmap karttapalvelu." name="description">
+    <meta content="Suomen dynmap :D" property="og:title">
+    <meta content="Suomen dynmap, Käytännöllisyyttä ja järjenkäyttöä soveltaen tehty dynmap karttapalvelu." property="og:description">
+    <meta content="summary" name="twitter:card">
+    <meta content="width=device-width, initial-scale=1" name="viewport">
+</head>
+<body>
+    <style>
+    * {
+        padding: 0px;
+        margin: 0px;
+        border: 0px;
+    }
+    
+    .text {
+        position: absolute;
+        top: calc(50% - 200px);
+        left: calc(50% - 300px);
+        height: 400px;
+        width: 600px;
+        color: black;
+        text-align: center;
+    }
+
+    .selector {
+        z-index: 3;
+        position: fixed;
+        width: 300px;
+        height: 100px;
+        bottom: 5px;
+        left: calc(50% - 150px);
+        background-color: rgba(55, 55, 243, 0.466);
+        border: 10px;
+        border-color: blue;
+        border-radius: 8px;
+        display: grid;
+        opacity: 0.2;
+        float: left;
+        grid-template-columns: repeat(auto-fit, 80px);
+        justify-content: center;
+        justify-items: center;
+        justify-self: center;
+        align-self: center;
+        overflow-x: auto;
+    }
+
+    .selector:hover {
+        opacity: 1.0;
+    }
+
+    .selector_button {
+        margin-top: 20px;
+        width: 75px;
+        height: 60px;
+        background-color: white;
+        opacity: 0.2;
+        display: flex;
+        cursor: pointer;
+        border-radius: 8px;
+        text-align: center;
+        justify-content: center;
+        justify-items: center;
+        font-size: 13px;
+        color: black;
+    }
+    .selector_button:hover{
+        background-color: rgb(147, 163, 255);
+    }
+
+    .map {
+        position: fixed;
+        width: 100%;
+        height: 100%;
+        z-index: 2;
+        display: none;
+    }
+
+    .nomap {
+        position: fixed;
+        width: 100%;
+        height: 100%;
+        z-index: 0;
+    }
+
+    .background {
+        position: fixed;
+        height: 100%;
+        width: 100%;
+        z-index: 1;
+    }
+
+    .server_selector {
+        position: fixed;
+        height: 300px;
+        width: 100px;
+        z-index: 3;
+        left: 20px;
+        top: calc(50% - 150px);
+        background-color: rgba(55, 55, 243, 0.466);
+        border: 10px;
+        border-color: blue;
+        border-radius: 8px;
+        display: grid;
+        opacity: 0.2;
+        float: left;
+        grid-template-columns: repeat(auto-fit, 80px);
+        justify-content: center;
+        justify-items: center;
+        justify-self: center;
+        align-self: center;
+        overflow-x: auto;
+    }
+
+    .server {
+        position: fixed;
+        width: 100%;
+        height: 100%;
+        z-index: 2;
+    }
+
+    .noserver {
+        position: fixed;
+        width: 100%;
+        height: 100%;
+        z-index: 0;
+    }
+
+    </style>
+    <h1 class="text" style="display: none;">Please wait, Connecting to API.</h1>
+    <script>
+        const maps = []
+        const servers = []
+        var viewset = false
+        const loc = {}
+
+        function getMaps(){
+            var xhttp = new XMLHttpRequest();
+            xhttp.onreadystatechange = function() {
+                if (this.readyState == 4 && this.status == 200) {
+                    // Add the maps
+                    var gotArray = JSON.parse(xhttp.responseText)
+
+                    Object.keys(gotArray).forEach(server => {
+                        console.log("got server: " + server)
+                        var server = document.createElement("server")
+                        server.id = server
+                        server.className = "noserver"
+
+                        var btn = document.createElement("button")
+                        btn.className = "selector_button"
+                        btn.onclick = function(){select_server(server)}
+                        btn.innerHTML = server
+                        servers.push(server)
+                        btn.id = "BTN-" + server
+                        document.getElementById("server_selector").appendChild(btn)
+                        gotArray[server].forEach(map => {
+                            var btn = document.createElement("button")
+                            btn.className = "selector_button"
+                            btn.onclick = function(){select(server + "&&&" + map)}
+                            btn.innerHTML = server
+                            servers.push(server)
+                            btn.id = "BTN-" + server
+                            document.getElementById("selector").appendChild(btn)
+                            var mapit = document.createElement("iframe")
+                            mapit.className = "map"
+                            server.appendChild(mapit)
+                        })
+                    })
+                }
+            };
+            xhttp.open("post", "/api?field=availableMaps", true);
+            xhttp.send();
+
+        }
+
+        function getMapNames(){
+            var xhttp = new XMLHttpRequest();
+            xhttp.onreadystatechange = function() {
+                if (this.readyState == 4 && this.status == 200) {
+                    // Add the maps
+                    var tojson = JSON.parse(xhttp.responseText)
+                    maps.forEach(map => {
+                        if(tojson[map] != undefined){
+                            document.getElementById("BTN-" + map).innerHTML = tojson[map]
+                            console.log("set")
+                        }
+                    })
+                }
+            };
+            xhttp.open("post", "/api?field=mapAlias", true);
+            xhttp.send();
+        }
+
+        var inview = ""
+
+        function select(map){
+
+            if(map == inview){
+                return;
+            }
+
+            if(inview != ""){
+                loc[inview] = map.split("&&&")[0] + document.getElementById(inview).contentWindow.dynmap.getLink()
+                document.getElementById(inview).style.display = "none"
+                document.getElementById(map).style.display = "block"
+                document.cookie = "map=" + map
+
+                if(loc[map] != undefined){
+                    document.getElementById(map).contentWindow.location.replace(loc[map]);
+                }else {
+                    document.getElementById(map).contentWindow.location.replace(map);
+                }
+                document.getElementById(inview).contentWindow.location.replace("/none")
+                inview = map
+            }else {
+                inview = map
+                document.getElementById(map).style.display = "block"
+                document.cookie = "map=" + map
+            }
+            console.log("Set: " + map)
+        }
+
+        var server_inview = ""
+
+        function select_server(server){
+            if(server_inview == ""){
+                server_inview = server
+                document.getElementById(server).className = "server"
+            }else {
+                document.getElementById(server_inview).className = "noserver"
+                server_inview = server
+                
+            }
+        }
+
+        getMaps()
+
+        //Style change for hover events (selector buttons)
+        function selectorHover(){
+            console.log("Over")
+            maps.forEach(map => {
+                var btn = "BTN-" + map
+                document.getElementById(btn).style.opacity = 1.0
+            })
+        }
+
+    </script>
+
+    <app>
+        <selector class="selector" id="selector" onmouseover="selectorHover()" onmouseout="">
+
+        </selector>
+
+        <selecotr class="server_selector" id="server_selector">
+            <btn class="selector_button"></btn>
+            <btn class="selector_button"></btn>
+            <btn class="selector_button"></btn>
+            <btn class="selector_button"></btn>
+            <btn class="selector_button"></btn>
+        </selecotr>
+        
+        <servers id="servers">
+
+        </servers>
+        
+    </app>
+</body>

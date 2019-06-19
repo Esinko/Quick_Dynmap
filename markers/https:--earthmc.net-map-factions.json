@@ -1,0 +1,31 @@
+"suomi": {
+    "hide": false,
+    "circles": {
+    },
+    "areas": {},
+    "label": "Raja",
+    "markers": {},
+    "lines": {
+        "Pääraja": {
+            "fillcolor": "#003366",
+            "ytop": 64.0,
+            "color": "#ffffff",
+            "markup": false,
+            "x": [
+                
+            ],
+            "z": [
+                
+            ],
+            "y": [
+                
+            ],
+            "weight": 9.0,
+            "bottom": 64.0,
+            "label": "Suomen raja.",
+            "opacity": 0.8,
+            "fillopacity": 0.0
+        }
+    },
+    "layerprio": 0
+}

@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset='utf-8'>
+    <meta http-equiv='X-UA-Compatible' content='IE=edge'>
+    <title>Suomen dynmap :D</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <meta content="Suomen dynmap, Käytännöllisyyttä ja järjenkäyttöä soveltaen tehty dynmap karttapalvelu." name="description">
+    <meta content="Suomen dynmap :D" property="og:title">
+    <meta content="Suomen dynmap, Käytännöllisyyttä ja järjenkäyttöä soveltaen tehty dynmap karttapalvelu." property="og:description">
+    <meta content="summary" name="twitter:card">
+</head>
+<body>
+
+    <script>
+        
+        var servers = {}
+
+        function getServers(){
+            var xhttp = new XMLHttpRequest();
+            xhttp.onreadystatechange = function() {
+                if (this.readyState == 4 && this.status == 200) {
+                    // Add the maps
+                    var tojson = JSON.parse(xhttp.responseText)
+                    Object.keys(tojson).forEach(server =>{
+                        var server_btn = document.createElement("button")
+                        server_btn.className = "button"
+                        server_btn.id = "BTN-" + server
+                        server_btn.innerHTML = server
+                        server_btn.onclick = function(){ select_server(server) }
+                        servers[server] = []
+                        document.getElementById("server_selector").appendChild(server_btn)
+
+                        var server_elem = document.createElement("server")
+                        server_elem.className = "noserver"
+                        server_elem.id = server
+                        document.getElementById("servers").appendChild(server_elem)
+                    })
+                    getNames()
+                }
+            };
+            xhttp.open("post", "/api?field=availableMaps", true);
+            xhttp.send();
+        }
+
+        function hover(id, mode){
+            if(mode == true){
+                var lp = document.getElementById(id).children
+                document.getElementById(id).style.opacity = 0.2
+                for (i = 0; i < lp.length; i++) {
+                    document.getElementById(lp[i].id).style.opacity = 0.2
+                }
+            }else {
+                var lp = document.getElementById(id).children
+                document.getElementById(id).style.opacity = 1.0
+                for (i = 0; i < lp.length; i++) {
+                    document.getElementById(lp[i].id).style.opacity = 1.0
+                }
+            }
+        }
+
+        var server_inview = ""
+
+        function select_server(server){
+            document.cookie = "map=" + server
+            if(server_inview == ""){
+                document.getElementById(server).className = "server"
+                server_inview = server
+                var xhttp = new XMLHttpRequest();
+                xhttp.onreadystatechange = function() {
+                    if (this.readyState == 4 && this.status == 200) {
+                        // Add the maps
+                        var tojson = JSON.parse(xhttp.responseText)
+                        var map_selector = document.createElement("selector")
+                        map_selector.className = "mapselector"
+                        map_selector.id = "SELECTOR-" + server
+                        map_selector.onmouseover = function(){ hover(map_selector.id) }
+                        map_selector.onmouseout = function(){ hover(map_selector.id, true)}
+                        document.getElementById(server).appendChild(map_selector)
+                        tojson[server].forEach(map => {
+                            console.log("Running for: " + map)
+                            var map_elem = document.createElement("iframe")
+                            map_elem.id = map
+                            map_elem.src = "/none"
+                            map_elem.className = "nomap"
+                            document.getElementById(server).appendChild(map_elem)
+                            servers[server].push(map)
+                            var map_btn = document.createElement("button")
+                            map_btn.className = "button"
+                            map_btn.innerHTML = map
+                            map_btn.id = "BTN-MAP-" + map
+                            map_btn.onclick = function(){ select_map(map, server) }
+                            map_selector.appendChild(map_btn)
+                        })
+                    }
+                };
+                xhttp.open("post", "/api?field=availableMaps", true);
+                xhttp.send();
+            }else {
+                if(document.getElementById(map_inview) != null && document.getElementById(map_inview).contentWindow.dynmap != undefined && document.getElementById(map_inview).contentWindow.dynmap.maptype != undefined){
+                    loc[map_inview] = document.getElementById(map_inview).contentWindow.dynmap.getLink()
+                }
+                document.getElementById(server_inview).className = "noserver"
+                while (document.getElementById(server_inview).firstChild) {
+                    document.getElementById(server_inview).removeChild(document.getElementById(server_inview).firstChild);
+                }
+                server_inview = server
+                var xhttp = new XMLHttpRequest();
+                xhttp.onreadystatechange = function() {
+                    if (this.readyState == 4 && this.status == 200) {
+                        // Add the maps
+                        var tojson = JSON.parse(xhttp.responseText)
+                        var map_selector = document.createElement("selector")
+                        map_selector.className = "mapselector"
+                        map_selector.id = "SELECTOR-" + server
+                        map_selector.onmouseover = function(){ hover(map_selector.id) }
+                        map_selector.onmouseout = function(){ hover(map_selector.id, true)}
+                        document.getElementById(server).appendChild(map_selector)
+                        tojson[server].forEach(map => {
+                            var map_elem = document.createElement("iframe")
+                            map_elem.id = map
+                            map_elem.src = "/none"
+                            map_elem.className = "nomap"
+                            document.getElementById(server).appendChild(map_elem)
+                            servers[server].push(map)
+                            var map_btn = document.createElement("button")
+                            map_btn.className = "button"
+                            map_btn.innerHTML = map
+                            map_btn.id = "BTN-MAP-" + map
+                            map_btn.onclick = function(){ select_map(map, server) }
+                            map_selector.appendChild(map_btn)
+                        })
+                    }
+                };
+                xhttp.open("post", "/api?field=availableMaps", true);
+                xhttp.send();
+                document.getElementById(server).className = "server"
+            }
+        }
+
+        var map_inview = ""
+        var loc = {
+            
+        }
+
+        function select_map(map, server){
+            console.log("Selected " + map)
+            document.getElementById(map).className = "map"
+            if(map != "NO"){
+                document.cookie = "map=" + server + "/" + map
+            }else {
+                document.cookie = "map=" + server
+            }
+            document.getElementById(map).src = "/" + map
+            if(map_inview == ""){
+                map_inview = map
+            }else {
+                if(document.getElementById(map_inview) != null && document.getElementById(map_inview).contentWindow.dynmap != undefined && document.getElementById(map_inview).contentWindow.dynmap.maptype != undefined){
+                    loc[map_inview] = document.getElementById(map_inview).contentWindow.dynmap.getLink()
+                }
+                if(document.getElementById(map_inview) != null){
+                    document.getElementById(map_inview).className = "nomap"
+                    document.getElementById(map_inview).src = "/none"
+                }
+                map_inview = map
+                if(loc[map] != undefined){
+                    document.getElementById(map).src = loc[map]
+                }else {
+                    document.getElementById(map).src = "/" + map
+                }
+            }
+        }
+
+        function getNames(){
+            var xhttp = new XMLHttpRequest();
+            xhttp.onreadystatechange = function() {
+                if (this.readyState == 4 && this.status == 200) {
+                    // Add the maps
+                    var tojson = JSON.parse(xhttp.responseText)
+                    Object.keys(tojson).forEach(keys => {
+                        if(keys == "servers"){
+                            Object.keys(servers).forEach(server => {
+                                if(server == keys){
+                                    document.getElementById("BTN-" + server).innerHTML = tojson.servers[keys]
+                                }
+                            })
+                        }
+                        if(keys == "maps"){
+                            Object.keys(servers).forEach(server => {
+                                servers[server].forEach(map => {
+                                    Object.keys(tojson.maps[server]).forEach(mapname => {
+                                        if(map == mapname){
+                                            document.getElementById("BTN-MAP-" + map).innerHTML = tojson.maps[server][mapname]
+                                        }
+                                    })
+                                })
+                            })
+                        }
+                    })
+                }
+            };
+            xhttp.open("post", "/api?field=availableMaps", true);
+            xhttp.send();
+        }
+
+        getServers()
+
+    </script>
+
+    <style>
+    
+    * {
+        padding: 0px;
+        margin: 0px;
+        border: 0px;
+    }
+
+    .mapselector {
+        z-index: 3;
+        position: fixed;
+        width: 300px;
+        height: 100px;
+        bottom: 5px;
+        left: calc(50% - 150px);
+        background-color: rgba(55, 55, 243, 0.466);
+        border: 10px;
+        border-color: blue;
+        border-radius: 8px;
+        display: grid;
+        opacity: 0.2;
+        float: left;
+        grid-template-columns: repeat(auto-fit, 80px);
+        justify-content: center;
+        justify-items: center;
+        justify-self: center;
+        align-self: center;
+        overflow-x: auto;
+    }
+    
+    .server_selector {
+        position: fixed;
+        height: 300px;
+        width: 100px;
+        z-index: 3;
+        left: 20px;
+        top: calc(50% - 150px);
+        background-color: rgba(55, 55, 243, 0.466);
+        border: 10px;
+        border-color: blue;
+        border-radius: 8px;
+        display: grid;
+        opacity: 0.2;
+        float: left;
+        grid-template-columns: 80px;
+        grid-template-rows: repeat(auto-fit, 60px);
+        grid-column-end: auto;
+        grid-row-gap: 10px;
+        justify-content: center;
+        justify-items: center;
+        justify-self: center;
+        align-self: center;
+        overflow-x: hidden;
+        overflow-y: auto;
+    }
+
+    .button {
+        margin-top: 20px;
+        width: 75px;
+        height: 60px;
+        background-color: white;
+        opacity: 0.2;
+        display: flex;
+        cursor: pointer;
+        border-radius: 8px;
+        text-align: center;
+        justify-content: center;
+        justify-items: center;
+        justify-self: center;
+        font-size: 13px;
+        color: black;
+    }
+    .button:hover{
+        background-color: rgb(147, 163, 255);
+    }
+
+    .server {
+        position: fixed;
+        width: 100%;
+        height: 100%;
+    }
+
+    .noserver {
+        position: fixed;
+        width: 100%;
+        height: 100%;
+        display: none;
+    }
+
+    .map {
+        position: fixed;
+        width: 100%;
+        height: 100%;
+    }
+
+    .nomap {
+        position: fixed;
+        width: 100%;
+        height: 100%;
+        display: none;
+    }
+    
+    </style>
+
+    <app>
+
+        <selector class="server_selector" id="server_selector" onmouseover="hover('server_selector')"  onmouseout="hover('server_selector', true)"> 
+
+        </selector>
+
+        <servers id="servers">
+
+        </servers>
+    </app>
+    
+</body>
+</html>
