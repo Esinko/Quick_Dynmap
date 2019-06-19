@@ -9,7 +9,8 @@ To setup the map, download this github repostory and follow the following tutori
 1. Open a port or if you already have an open port skip this step
 2. Open main.js and look for: /* Config */.
 3. In it you will see something like this:
-```const map = {
+```
+const map = {
     
 }
 
