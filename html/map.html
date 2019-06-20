@@ -137,6 +137,7 @@
                 xhttp.send();
                 document.getElementById(server).className = "server"
             }
+            getNames()
         }
 
         var map_inview = ""
@@ -170,6 +171,7 @@
                     document.getElementById(map).src = "/" + map
                 }
             }
+            getNames()
         }
 
         function getNames(){
@@ -181,9 +183,12 @@
                     Object.keys(tojson).forEach(keys => {
                         if(keys == "servers"){
                             Object.keys(servers).forEach(server => {
-                                if(server == keys){
-                                    document.getElementById("BTN-" + server).innerHTML = tojson.servers[keys]
-                                }
+                                Object.keys(tojson[keys]).forEach(servername => {
+                                    if(server == servername){
+                                        console.log("Set name: " + server + "=" + tojson[keys][server])
+                                        document.getElementById("BTN-" + server).innerHTML = tojson[keys][server]
+                                    }
+                                })
                             })
                         }
                         if(keys == "maps"){
@@ -191,7 +196,8 @@
                                 servers[server].forEach(map => {
                                     Object.keys(tojson.maps[server]).forEach(mapname => {
                                         if(map == mapname){
-                                            document.getElementById("BTN-MAP-" + map).innerHTML = tojson.maps[server][mapname]
+                                            console.log("Set name: " + map + "=" + tojson[keys][server][mapname])
+                                            document.getElementById("BTN-MAP-" + map).innerHTML = tojson[keys][server][mapname]
                                         }
                                     })
                                 })
@@ -200,11 +206,15 @@
                     })
                 }
             };
-            xhttp.open("post", "/api?field=availableMaps", true);
+            xhttp.open("post", "/api?field=mapNames", true);
             xhttp.send();
         }
 
         getServers()
+
+        function init(){
+            
+        }
 
     </script>
 
@@ -310,10 +320,24 @@
         display: none;
     }
     
+    .hi {
+        top: calc(50% - 75px);
+        left: calc(50% - 110px);
+        position: absolute;
+        width: 220px;
+        height: 80px;
+        font-size: 20px;
+        color: white;
+        background-color: rgb(88, 88, 255);
+        text-align: center;
+        justify-content: center;
+        padding-top: 30px;
+        border-radius: 8px;
+    }
+
     </style>
 
     <app>
-
         <selector class="server_selector" id="server_selector" onmouseover="hover('server_selector')"  onmouseout="hover('server_selector', true)"> 
 
         </selector>

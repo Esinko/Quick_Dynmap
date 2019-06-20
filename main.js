@@ -71,7 +71,7 @@ const fields = { //Data provided to the client
 api.use(cookieParser()); //Get the cookies included with the request
 
 api.get("/", (req, res) => { //Respond to new sessions 
-    res.sendFile(__dirname + "/html/map.html") //Send the client
+    res.status(200).sendFile(__dirname + "/html/map.html") //Send the client
 })
 
 api.get("/none", (req, res) => { //Redirects iframes to this when they are not used
@@ -98,6 +98,7 @@ api.post("/api", async (req, res) => { //Send the backend data to the client
         res.send(fields[req.query.field]) //Send the data with the query as the JSOn object name
     }
 })
+
 
 /* The map data host */
 
