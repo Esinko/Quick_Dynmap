@@ -1,5 +1,5 @@
 # Quick_Dynmap
-Use many Minecraft dynmaps with this basic data router and client host. Customize your experience with easier ways to add custom markers and locations to your map.
+Use many Minecraft dynmaps with this basic data router and client host. Customize your experience with easier ways to add custom markers and locations to your map. (Client side)
 
 # NOTE: This is a personal project of mine and is not to be meant to be sold or being widely used. I just want others to be able to enjoy the features it has. All the code got from the Dynmap plugin IS THEIR CODE and I do not own any of it or claim to own it.
 
@@ -87,3 +87,11 @@ You can host assets for markers and other stuff in the assets folder, the files 
 
 # Usage
 I suggest you have a basic knowledge of Javascript and JSON. So you can edit stuff I put in myself as this is repostory for anin use service.
+
+# Known bugs
+- The current name system has a bug where only one server's names apear.
+- Object conversion issue, probably caused by the above bug-
+
+# Todo
+- Load a default map on startup.
+- When a server does not have maps, detect that as an error in the client and server-side
