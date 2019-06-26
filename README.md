@@ -96,3 +96,5 @@ I suggest you have a basic knowledge of Javascript and JSON. So you can edit stu
 # Todo
 - Load a default map on startup.
 - When a server does not have maps, detect that as an error in the client and server-side
+- Update names in markers
+- Multiple plugins support with basic rerouting configs
