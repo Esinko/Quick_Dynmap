@@ -91,6 +91,7 @@ I suggest you have a basic knowledge of Javascript and JSON. So you can edit stu
 # Known bugs
 - The current name system has a bug where only one server's names apear.
 - Object conversion issue, probably caused by the above bug-
+- If you select a server -> oepn a map -> select the same server again -> maps won't open
 
 # Todo
 - Load a default map on startup.
