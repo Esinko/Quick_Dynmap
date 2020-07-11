@@ -1,3 +1,5 @@
+# Note
+This project was created in a rush and now looking back I'm not really proud of this creation. There are typos and poor development decisions everyhwhere and it's hard to use. I will continue to keep this repo public, but please note that this is not quality code and this readme is also pretty shit.
 # Quick_Dynmap
 Use many Minecraft dynmaps with this basic data router and client host. Customize your experience with easier ways to add custom markers and locations to your map. (Client side)
 
